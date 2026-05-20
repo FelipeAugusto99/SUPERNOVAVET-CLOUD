@@ -1,28 +1,31 @@
 services:
 
-  app:
-    build: .
-    container_name: supernova-api
-    ports:
-      - "8080:8080"
-    depends_on:
-      - h2db
-    networks:
-      - supernova-net
-
   h2db:
     image: oscarfonts/h2
     container_name: supernova-h2
+
     ports:
       - "1521:1521"
       - "81:81"
+
     volumes:
-      - h2-data:/opt/h2-data
+      - ./data:/opt/h2-data
+
     networks:
       - supernova-net
 
-volumes:
-  h2-data:
+  app:
+    build: .
+    container_name: supernova-api
+
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - h2db
+
+    networks:
+      - supernova-net
 
 networks:
   supernova-net:
