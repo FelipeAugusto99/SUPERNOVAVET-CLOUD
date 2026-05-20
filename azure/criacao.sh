@@ -163,3 +163,15 @@ az vm run-command invoke \
 
     sudo docker ps
   "
+
+echo ""
+echo "======================================="
+echo "VM criada com sucesso!"
+echo "IP PUBLICO DA VM:"
+echo "======================================="
+
+az vm list-ip-addresses \
+  --resource-group $RG \
+  --name $VM \
+  --query "[0].virtualMachine.network.publicIpAddresses[0].ipAddress" \
+  --output tsv
