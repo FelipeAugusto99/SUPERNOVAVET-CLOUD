@@ -37,7 +37,7 @@ public class Petservice {
 
         Tutor tutorExistente = tutorRepository.findByEmail(
                 pet.getTutor().getEmail()
-        );
+        ).orElseThrow(() -> new RuntimeException("Tutor não encontrado"));
 
         if (tutorExistente != null) {
             pet.setTutor(tutorExistente);
