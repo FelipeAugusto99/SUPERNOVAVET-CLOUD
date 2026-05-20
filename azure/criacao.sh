@@ -1,5 +1,5 @@
 GRUPO=SupernovaVet
-LOCATION=canadacentral
+LOCATION=brazilsouth
 USER=azureuser
 PASSWORD='Supernova@2026'
 
@@ -15,6 +15,8 @@ az group create \
   --location $LOCATION \
   --tags owner=$GRUPO environment=dev cost-center=fiap
 
+sleep 10
+
 # 2. Criar VNet e Subnet
 az network vnet create \
   --resource-group $RG \
@@ -24,13 +26,17 @@ az network vnet create \
   --subnet-prefix 10.10.1.0/24 \
   --tags owner=$GRUPO environment=dev cost-center=fiap
 
+sleep 15
+
 # 3. Criar NSG
 az network nsg create \
   --resource-group $RG \
   --name $NSG \
   --tags owner=$GRUPO environment=dev cost-center=fiap
 
-# 4. Liberar porta SSH
+sleep 15
+
+# 4. Liberar SSH
 az network nsg rule create \
   --resource-group $RG \
   --nsg-name $NSG \
@@ -40,7 +46,9 @@ az network nsg rule create \
   --destination-port-range 22 \
   --access Allow
 
-# 5. Liberar porta HTTP
+sleep 5
+
+# 5. Liberar HTTP
 az network nsg rule create \
   --resource-group $RG \
   --nsg-name $NSG \
@@ -49,6 +57,8 @@ az network nsg rule create \
   --priority 1001 \
   --destination-port-range 80 \
   --access Allow
+
+sleep 5
 
 # 6. Liberar porta 8080
 az network nsg rule create \
@@ -60,6 +70,8 @@ az network nsg rule create \
   --destination-port-range 8080 \
   --access Allow
 
+sleep 10
+
 # 7. Associar NSG à subnet
 az network vnet subnet update \
   --resource-group $RG \
@@ -67,7 +79,9 @@ az network vnet subnet update \
   --name $SUBNET \
   --network-security-group $NSG
 
-# 8. Criar VM Ubuntu Linux
+sleep 20
+
+# 8. Criar VM Ubuntu
 az vm create \
   --resource-group $RG \
   --name $VM \
@@ -75,11 +89,14 @@ az vm create \
   --admin-username $USER \
   --admin-password $PASSWORD \
   --authentication-type password \
-  --size Standard_B2s \
+  --size Standard_E2s_v3 \
   --vnet-name $VNET \
   --subnet $SUBNET \
   --nsg $NSG \
+  --public-ip-sku Standard \
   --tags owner=$GRUPO environment=dev cost-center=fiap
+
+sleep 60
 
 # 9. Instalar Docker, Git e Nano
 az vm run-command invoke \
@@ -129,7 +146,9 @@ EOF
     sudo usermod -aG docker azureuser
   '
 
-# 10. Executar container NGINX na porta 8080
+sleep 20
+
+# 10. Executar container NGINX
 az vm run-command invoke \
   --resource-group $RG \
   --name $VM \
