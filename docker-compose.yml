@@ -24,6 +24,8 @@ services:
     depends_on:
       - h2db
 
+    restart: always
+
     networks:
       - supernova-net
 
