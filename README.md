@@ -265,7 +265,7 @@ az login
 ## 4) Executar script de criação da infraestrutura
 
 ```bash
-./azure/criacao.sh
+azure/criacao.sh
 ```
 
 O script realiza automaticamente:
@@ -282,6 +282,33 @@ O script realiza automaticamente:
 # Execução da Aplicação
 
 Após o script finalizar:
+
+## SSH
+
+```bash
+ssh azureuser@IP_DA_VM
+```
+
+## CLONAR REPO
+
+```bash
+git clone https://github.com/FelipeAugusto99/SUPERNOVAVET-CLOUD.git
+```
+
+```bash
+cd SUPERNOVAVET-CLOUD
+```
+## Rodar Docker Compose
+
+```bash
+sudo docker compose up -d --build
+```
+
+## CONTAINERS RODANDO
+
+```bash
+sudo docker ps
+```
 
 ## API
 
