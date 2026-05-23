@@ -455,24 +455,12 @@ USER appuser
 
 ---
 
-# Evidências Necessárias para Entrega
-
-## Demonstrar no vídeo
-
-- Execução do script Azure CLI
-- Criação automática da VM
-- Execução do Docker Compose
-- Funcionamento da API
-- Persistência dos dados
-- Operações CRUD completas
-- Console H2 funcionando
-
----
-
 # Remoção da Infraestrutura
 
 Para remover toda a infraestrutura criada:
 
+Rode isto em outro bash, fora da VM, entre na pasta do projeto, da mesma maneira qndo foi dar o comando "azure/criar.sh"
+
 ```bash
-./azure/deletar.sh
+azure/deletar.sh
 ```
