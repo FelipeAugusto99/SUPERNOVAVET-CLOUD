@@ -239,16 +239,7 @@ az login
 
 ---
 
-## 4) Dar permissão aos scripts
-
-```bash
-chmod +x azure/criacao.sh
-chmod +x azure/deletar.sh
-```
-
----
-
-## 5) Executar script de criação da infraestrutura
+## 4) Executar script de criação da infraestrutura
 
 ```bash
 ./azure/criacao.sh
