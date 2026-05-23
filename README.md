@@ -29,7 +29,6 @@ A solução oferece:
 
 - Centralização do gerenciamento veterinário
 - Facilidade no cadastro e consulta de pets
-- Persistência de dados em banco H2
 - Facilidade de deploy utilizando Docker
 - Escalabilidade em nuvem utilizando Azure
 - Ambiente reproduzível através de scripts automatizados
@@ -62,8 +61,6 @@ Azure VM Linux
 Docker Compose
    ↓
 Container Spring Boot API
-   ↓
-Container Banco H2
 ```
 
 ---
@@ -79,22 +76,8 @@ Container Banco H2
 
 ### Banco H2
 
-- Container: `supernova-h2`
-- Porta TCP: `1521`
-- Console Web: `81`
-
----
-
-# Persistência de Dados
-
-O banco H2 utiliza volume nomeado Docker:
-
-```yaml
-volumes:
-  h2-data:
-```
-
-Garantindo persistência dos dados mesmo após reinicialização dos containers.
+- Banco H2 em memória
+- Console H2 habilitado na aplicação
 
 ---
 
@@ -112,7 +95,7 @@ services:
       - "81:81"
 
     volumes:
-      - h2-data:/opt/h2-data
+      - ./data:/opt/h2-data
 
     networks:
       - supernova-net
@@ -132,9 +115,6 @@ services:
 
 networks:
   supernova-net:
-
-volumes:
-  h2-data:
 ```
 
 ---
@@ -168,13 +148,18 @@ CMD java -jar target/Novamonitor-0.0.1-SNAPSHOT.jar
 ## application.properties
 
 ```properties
-spring.datasource.url=jdbc:h2:tcp://h2db:1521/opt/h2-data/meubanco
-spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.url=jdbc:h2:mem:testdb
+
 spring.datasource.username=sa
 spring.datasource.password=
 
+spring.datasource.driver-class-name=org.h2.Driver
+
 spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
 spring.jpa.hibernate.ddl-auto=update
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
 
 spring.h2.console.enabled=true
 spring.h2.console.settings.web-allow-others=true
@@ -192,23 +177,17 @@ spring.h2.console.settings.web-allow-others=true
 GET /pets
 ```
 
----
-
 ### POST - Criar Pet
 
 ```http
 POST /pets
 ```
 
----
-
 ### PUT - Atualizar Pet
 
 ```http
 PUT /pets/{id}
 ```
-
----
 
 ### DELETE - Remover Pet
 
@@ -225,8 +204,6 @@ DELETE /pets/{id}
 ```http
 GET /tutores
 ```
-
----
 
 ### POST - Criar Tutor
 
@@ -262,10 +239,19 @@ az login
 
 ---
 
-## 4) Executar script de criação da infraestrutura
+## 4) Dar permissão aos scripts
 
 ```bash
-azure/criacao.sh
+chmod +x azure/criacao.sh
+chmod +x azure/deletar.sh
+```
+
+---
+
+## 5) Executar script de criação da infraestrutura
+
+```bash
+./azure/criacao.sh
 ```
 
 O script realiza automaticamente:
@@ -283,13 +269,15 @@ O script realiza automaticamente:
 
 Após o script finalizar:
 
-## SSH
+## SSH na VM
 
 ```bash
 ssh azureuser@IP_DA_VM
 ```
 
-## CLONAR REPO
+---
+
+## Clonar repositório dentro da VM
 
 ```bash
 git clone https://github.com/FelipeAugusto99/SUPERNOVAVET-CLOUD.git
@@ -298,28 +286,37 @@ git clone https://github.com/FelipeAugusto99/SUPERNOVAVET-CLOUD.git
 ```bash
 cd SUPERNOVAVET-CLOUD
 ```
+
+---
+
 ## Rodar Docker Compose
 
 ```bash
 sudo docker compose up -d --build
 ```
 
-## CONTAINERS RODANDO
+---
+
+## Verificar containers rodando
 
 ```bash
 sudo docker ps
 ```
 
+---
+
 ## API
 
-```bash
+```text
 http://SEU-IP:8080/pets
 ```
 
+---
+
 ## Console H2
 
-```bash
-http://SEU-IP:81
+```text
+http://SEU-IP:8080/h2-console
 ```
 
 ---
@@ -455,12 +452,19 @@ USER appuser
 
 ---
 
-# Remoção da Infraestrutura
+# Evidência de Remoção da Infraestrutura
 
 Para remover toda a infraestrutura criada:
 
-Rode isto em outro bash, fora da VM, entre na pasta do projeto, da mesma maneira qndo foi dar o comando "azure/criar.sh"
+Abra outro terminal/bash fora da VM, volte para a pasta do projeto e execute:
 
 ```bash
-azure/deletar.sh
+./azure/deletar.sh
 ```
+
+Após executar, utilize o comando abaixo para comprovar que o Resource Group foi removido:
+
+```bash
+az group list -o table
+```
+
