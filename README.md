@@ -81,7 +81,9 @@ Azure Container Instance
 
 Todos os recursos utilizados na solução são criados através da Azure CLI.
 
-> O diagrama oficial da arquitetura será adicionado à documentação do projeto.
+## Diagrama da arquitetura
+
+![Arquitetura do SuperNova VET](docs/arquitetura-supernovavet.png)
 
 ---
 
